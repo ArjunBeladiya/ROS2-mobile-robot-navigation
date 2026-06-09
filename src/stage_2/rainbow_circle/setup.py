@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'singlethreaded_node = rainbow_circle.single_threading_node:main',
-            'multithreaded_node = rainbow_circle.multithreading_node:main',
+            'singlethreading_node = rainbow_circle.single_threading_node:main',
+            'multithreading_node = rainbow_circle.multithreading_node:main',
         ],
     },
 )
