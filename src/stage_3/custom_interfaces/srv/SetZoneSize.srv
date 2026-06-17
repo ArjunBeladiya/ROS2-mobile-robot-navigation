@@ -1,0 +1,6 @@
+float64 critical
+float64 warn
+float64 safe
+---
+bool success
+string message
