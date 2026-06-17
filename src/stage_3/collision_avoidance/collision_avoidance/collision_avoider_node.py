@@ -5,6 +5,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from builtin_interfaces.msg import Duration
@@ -18,9 +19,9 @@ RED    = 3
 
 ZONE_NAMES = {WHITE: 'WHITE', GREEN: 'GREEN', YELLOW: 'YELLOW', RED: 'RED'}
 
-SPEED_FULL = 0.5    
-SPEED_SLOW = 0.08   
-SPEED_AVOID = 0.03  
+SPEED_FULL  = 0.5   
+SPEED_SLOW  = 0.2  
+SPEED_AVOID = 0.05
 
 TURN_SPEED = 0.6
 
@@ -101,6 +102,7 @@ class CollisionAvoiderNode(Node):
 
         most_dangerous_zone = 'WHITE'
         highest_danger_value = WHITE
+        last_warned_zone = WHITE 
 
         result = TravelNoCrashing.Result()
         feedback_msg = TravelNoCrashing.Feedback()
@@ -123,7 +125,6 @@ class CollisionAvoiderNode(Node):
 
                 fl = self.current_zones.front_left
                 fr = self.current_zones.front_right
-
                 all_zones = [
                     fl, fr,
                     self.current_zones.back_left,
@@ -135,6 +136,21 @@ class CollisionAvoiderNode(Node):
                     most_dangerous_zone = self.zone_label(self.current_zones, run_worst)
 
                 worst_front = max(fl, fr)
+                if worst_front != last_warned_zone:
+                    if worst_front == RED:
+                        self.get_logger().warn(
+                            f'WARNING: entered RED zone (front_left={ZONE_NAMES.get(fl)}, '
+                            f'front_right={ZONE_NAMES.get(fr)}) — taking evasive action'
+                        )
+                    elif worst_front == YELLOW:
+                        self.get_logger().warn(
+                            f'WARNING: entered YELLOW zone (front_left={ZONE_NAMES.get(fl)}, '
+                            f'front_right={ZONE_NAMES.get(fr)}) — slowing down'
+                        )
+                    elif worst_front in (GREEN, WHITE) and last_warned_zone in (RED, YELLOW):
+                        self.get_logger().info('Zone cleared — resuming normal speed')
+                    last_warned_zone = worst_front
+
                 linear_speed, angular_speed = self.compute_command(fl, fr, worst_front)
 
                 if remaining < 0.1 and worst_front < RED:
@@ -186,16 +202,18 @@ class CollisionAvoiderNode(Node):
         """
         if worst_front == RED:
             if fl > fr:
-                angular = -TURN_SPEED  
+                angular = -TURN_SPEED   
             elif fr > fl:
                 angular = TURN_SPEED    
             else:
-                angular = TURN_SPEED    
+                angular = TURN_SPEED   
+
             return SPEED_AVOID, angular
 
         if worst_front == YELLOW:
             return SPEED_SLOW, 0.0
 
+        # GREEN or WHITE
         return SPEED_FULL, 0.0
 
     def zone_label(self, zones: DangerZones, value: int) -> str:
@@ -229,9 +247,7 @@ class CollisionAvoiderNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = CollisionAvoiderNode()
-
-    from rclpy.executors import MultiThreadedExecutor
-    executor = MultiThreadedExecutor()
+    executor = MultiThreadedExecutor(num_threads=4)
     executor.add_node(node)
     try:
         executor.spin()
