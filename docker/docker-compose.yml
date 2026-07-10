@@ -8,13 +8,14 @@ services:
     environment:
       - DISPLAY=$DISPLAY
     volumes:
-      - $IKI_WORKSPACE/26ss_ab-246955>/src:/root/iki_ws/src
+      - $IKI_WORKSPACE/26ss_ab-246955/src:/root/iki_ws/src
+      - $IKI_WORKSPACE/26ss_ab-246955/maps:/root/iki_ws/maps
       - $IKI_WORKSPACE/my_bash_history:/root/.bash_history
       - $IKI_WORKSPACE/26ss_ab-246955/my_bashrc:/root/.bashrc
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /run/user/1000/gdm/Xauthority:/root/.Xauthority:ro
     working_dir: /root/iki_ws
-    network_mode: host
+    network_mode: host  
     ipc: host
     privileged: true
     stdin_open: true
