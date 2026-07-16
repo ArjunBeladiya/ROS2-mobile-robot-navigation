@@ -2,7 +2,6 @@
 
 import rclpy
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
 from rclpy.executors import SingleThreadedExecutor
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from geometry_msgs.msg import Twist
@@ -11,7 +10,6 @@ from turtlesim.srv import SetPen
 class RainbowCircle(Node):
     def __init__(self):
         super().__init__('rainbow_circle')
-
         self.publishers_= self.create_publisher(
             Twist,
             '/turtle1/cmd_vel',
