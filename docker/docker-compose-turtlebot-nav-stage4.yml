@@ -1,19 +1,16 @@
 services:
-  turtlebot-nav:  
+  turtlebot_nav_stage4:
     image: fbe-dockerreg.rwu.de/doz-iki/staehle-vls/amr-tb3:latest
-    container_name: turtlebot-nav-container
-    network_mode: host
-    ipc: host
-    privileged: true
+    container_name: turtlebot_nav_stage4
     devices:
-    - /dev/dri:/dev/dri
+      - /dev/dri:/dev/dri
     environment:
-      - DISPLAY=${DISPLAY}
+      - DISPLAY=:0
       - QT_X11_NO_MITSHM=1
-      - ROS_DOMAIN_ID=$ROS_DOMAIN_ID
       - TURTLEBOT3_MODEL=burger
+      - ROS_DOMAIN_ID=36
       - BASH_ENV=/root/.bashrc
-      - GAZEBO_MODEL_PATH=/opt/ros/humble/share/turtlebot3_gazebo/models
+      - XAUTHORITY=/root/.Xauthority
     volumes:
       - $IKI_WORKSPACE/26ss_ab-246955/src:/root/iki_ws/src
       - $IKI_WORKSPACE/26ss_ab-246955/install:/root/iki_ws/install
@@ -22,9 +19,13 @@ services:
       - $IKI_WORKSPACE/26ss_ab-246955/maps:/root/iki_ws/maps
       - $IKI_WORKSPACE/my_bash_history:/root/.bash_history
       - $IKI_WORKSPACE/26ss_ab-246955/my_bashrc:/root/.bashrc
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ${HOME}/.Xauthority:/root/.Xauthority:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${HOME}/.Xauthority:/root/.Xauthority:ro
     working_dir: /root/iki_ws
+    network_mode: host  
+    ipc: host
+    privileged: true
+    stdin_open: true
     command:
       - bash
       - -c
@@ -32,9 +33,9 @@ services:
         source /opt/ros/humble/setup.bash &&
         source /usr/share/gazebo/setup.bash &&
         export ROS_DOMAIN_ID=36 &&
-        ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py &
+        ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage4.launch.py &
         sleep 5 &&
-        ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True &
+        ros2 launch turtlebot3_navigation2 navigation2.launch.py 'map:=/root/iki_ws/maps/dqn_stage4.yaml' use_sim_time:=True &
         sleep 10 &&
-        ros2 run initial_pose_publisher initial_pose_world &
+        ros2 run initial_pose_publisher initial_pose_dqn_stage4 &
         tail -f /dev/null
