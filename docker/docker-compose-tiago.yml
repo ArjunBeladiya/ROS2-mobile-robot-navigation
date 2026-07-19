@@ -1,13 +1,12 @@
 services:
-  turtlebot_nav_stage4:
-    image: fbe-dockerreg.rwu.de/doz-iki/staehle-vls/amr-tb3:latest
-    container_name: turtlebot_nav_stage4
+  tiago_container:
+    image: fbe-dockerreg.rwu.de/prj-iki-ros2/robots/tiago/tiago_base:sim-ar
+    container_name: tiago_container
     devices:
       - /dev/dri:/dev/dri
     environment:
       - DISPLAY=:0
       - QT_X11_NO_MITSHM=1
-      - TURTLEBOT3_MODEL=burger
       - ROS_DOMAIN_ID=36
       - BASH_ENV=/root/.bashrc
       - XAUTHORITY=/root/.Xauthority
@@ -32,12 +31,4 @@ services:
       - bash
       - -c
       - |
-        source /opt/ros/humble/setup.bash &&
-        source /usr/share/gazebo/setup.bash &&
-        export ROS_DOMAIN_ID=36 &&
-        ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage4.launch.py &
-        sleep 5 &&
-        ros2 launch turtlebot3_navigation2 navigation2.launch.py 'map:=/root/iki_ws/maps/dqn_stage4.yaml' use_sim_time:=True &
-        sleep 10 &&
-        ros2 run initial_pose_publisher initial_pose_dqn_stage4 &
         tail -f /dev/null
