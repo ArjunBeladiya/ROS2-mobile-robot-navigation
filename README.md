@@ -10,6 +10,8 @@ robotics repo stand out. Record ~10-15 seconds of the robot in RViz/Gazebo and d
 it in a `media/` folder, then reference it like this:
 ![Demo](media/demo.gif)
 -->
+## Demo
+![Demo](follow_wall.mp4)
 
 ## Overview
 
