@@ -1,4 +1,4 @@
-# ROS2 Mobile Robot Navigation & Behavior Suite
+# ROS2 Mobile Robot Navigation
 
 A progressive ROS2 (Humble) workspace built around simulated mobile robots (TurtleBot3 and TIAGo), covering reactive control, multithreaded execution, custom action-based collision avoidance, and full autonomous navigation with Nav2.
 
@@ -11,8 +11,18 @@ it in a `media/` folder, then reference it like this:
 ![Demo](media/demo.gif)
 -->
 ## Demo
-![Follow_wall_Demo](follow_wall.mp4)
-![tf_follower](tf_follower.mp4)
+
+### Wall Following
+| | | |
+|---|---|---|
+| ![Follow wall 1](media/follow_wall_1.png) | ![Follow wall 2](media/follow_wall_2.png) | ![Follow wall 3](media/follow_wall_3.png) |
+full video: ![follow_wall](follow_wall.mp4)
+
+### TF Follower
+| | |
+|---|---|
+| ![TF follower 1](media/tf_follower_1.png) | ![TF follower 2](media/tf_follower_2.png) |
+full video: ![tf_follower](tf_follower.mp4)
 
 ## Overview
 
