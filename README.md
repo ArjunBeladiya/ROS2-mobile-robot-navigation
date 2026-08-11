@@ -11,7 +11,8 @@ it in a `media/` folder, then reference it like this:
 ![Demo](media/demo.gif)
 -->
 ## Demo
-![Demo](follow_wall.mp4)
+![Follow_wall_Demo](follow_wall.mp4)
+![tf_follower](tf_follower.mp4)
 
 ## Overview
 
